@@ -1,0 +1,28 @@
+{
+  "name": "grid",
+  "version": "1.0.0",
+  "description": "grid - mosaic",
+  "main": "mosaic.js",
+  "scripts": {
+    "test": "mosaic-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonasdebeukelaer/grid.git"
+  },
+  "keywords": [
+    "art",
+    "mosaic",
+    "grid",
+    "crowdsource"
+  ],
+  "author": "Jonas De Beukelaer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonasdebeukelaer/grid/issues"
+  },
+  "homepage": "https://github.com/jonasdebeukelaer/grid#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}

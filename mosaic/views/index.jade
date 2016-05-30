@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  div.navig
+    div#title.navig-title
+      h1 #{title}
+  div.grid-container
+    div#grid.grid-square
+
+  div#aboutDiv.aboutDiv.centered
+    h1 What is this?
+    p A little project I've put together to see what it would like if many people could go on a website and contribute to what is essentially a crowdsourced piece of art. If it picks up then I'll make the pixels gradually smaller so more impressive pieces can be made.
+    p Pls don't hack and force your own image on here thaaanks.
+    p I'll keep an archive of completed pieces.
+
+
+    p Site build with the following tools:
+    ul
+      li: a(href="") jquery
+      li: a(href="") bootstrap
+      li: a(href="https://github.com/tkrotoff/jquery-simplecolorpicker") jquery-simplecolorpicker
+
+    p - Jonas De Beukelaer
+
+  div#darken.displayNone
