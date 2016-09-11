@@ -50,7 +50,6 @@ function selectColour(clickedId) {
 	$('select[name="colorpicker"]').simplecolorpicker({
 	  picker: true
 	}).on('change', function() {
-		console.log("remove now")
 	  $("#" + clickedId).css('background-color', $('select[name="colorpicker"]').val());
 	  $('select[name="colorpicker"]').simplecolorpicker('destroy');
 	  $('select[name="colorpicker"]').remove()

@@ -56,5 +56,9 @@ app.use(function(err, req, res, next) {
   });
 });
 
-
 module.exports = app;
+
+
+app.listen(3333 || conf.port);
+
+console.log('Started server on port ' + 3333);
