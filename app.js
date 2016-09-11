@@ -59,6 +59,6 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 
-app.listen(3333 || conf.port);
+app.listen(process.env.PORT || 3333);
 
-console.log('Started server on port ' + 3333);
+console.log('Started server on port ' + process.env.PORT || 3333);
