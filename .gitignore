@@ -1,4 +1,5 @@
 .DS_Store
+**/.DS_Store
 ve/
 bower_components/
 node_modules/
