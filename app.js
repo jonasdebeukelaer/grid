@@ -20,7 +20,8 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.normalize(path.join(__dirname, '/public'))));
+app.use("/public", express.static(path.normalize(path.join(__dirname, '/public'))));
+app.use("/node", express.static(path.normalize(path.join(__dirname, '/node_modules'))));
 
 app.use('/', routes);
 app.use('/users', users);

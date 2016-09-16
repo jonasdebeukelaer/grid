@@ -86,7 +86,8 @@ function insertSelect(id) {
 
 
 function setGridSize() {
-	var height = $(document).height() - $('navbar').height()
+	var height = $(document).height()
+	console.log($(document).height());
 	$('.grid-container').css('height', height.toString())
 	$('.grid-square').css('height', height.toString())
 	$('.grid-square').css('width', height.toString())

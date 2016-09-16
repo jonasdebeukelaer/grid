@@ -4,7 +4,7 @@ h1 {
 }
 
 body {
-	background: url("/images/img-noise-200x200.png");
+	background: url("/public/images/img-noise-200x200.png");
 }
 
 .navig {
@@ -12,6 +12,10 @@ body {
 	top: 0;
 	width: 100%;
 	min-height: 50px;
+}
+
+.navig:hover, #darken:hover {
+	cursor: pointer;
 }
 
 .navig-title {
