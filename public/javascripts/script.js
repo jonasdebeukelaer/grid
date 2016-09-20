@@ -2,10 +2,12 @@
 
 var currentCellId = ""
 var aboutVisible = false
+var http = new XMLHttpRequest();
 
 $(document).ready(function () {
 	var gridSize = setGridSize()
 	loadGrid(gridSize);
+	colourInGrid();
 
 	$('.grid-cell').click(function (event) {
 		if (event.currentTarget.id != currentCellId) {
@@ -50,11 +52,34 @@ function selectColour(clickedId) {
 	$('select[name="colorpicker"]').simplecolorpicker({
 	  picker: true
 	}).on('change', function() {
-	  $("#" + clickedId).css('background-color', $('select[name="colorpicker"]').val());
+		var newColour = $('select[name="colorpicker"]').val();
+	  $("#" + clickedId).css('background-color', newColour);
 	  $('select[name="colorpicker"]').simplecolorpicker('destroy');
 	  $('select[name="colorpicker"]').remove()
 	  $('#' + clickedId).removeClass('focusCell')
 	  currentCellId = ""
+
+	  var data = {
+	  	coords: clickedId.split("-")[1],
+	  	colour: newColour.replace("#", ""),
+	  	user: "person"
+	  }
+
+	  console.log(data);
+	  http.open("POST", "/pixel/", true);
+		http.setRequestHeader("Content-type", "application/json");
+
+		http.success = function(response) {
+			console.log("pixel added!");
+			console.log(response);
+		}
+
+		http.fail = function(response) {
+			console.log(response);
+		}
+
+		http.send(JSON.stringify(data));
+
 	});
 	
 }
@@ -87,7 +112,6 @@ function insertSelect(id) {
 
 function setGridSize() {
 	var height = $(document).height()
-	console.log($(document).height());
 	$('.grid-container').css('height', height.toString())
 	$('.grid-square').css('height', height.toString())
 	$('.grid-square').css('width', height.toString())
@@ -103,9 +127,9 @@ function createDivs(height) {
 	var i = 0
 	var j = 0
 	var limit = 20
-	var size = parseInt(height / 20)
+	var size = parseInt(height / limit)
 
-	for (i = 0; i < 20; i++) {
+	for (i = 0; i < limit; i++) {
 		var divRow = document.createElement("Div");
 		divRow.id = "grid-row-" + i;
 		divRow.className = "grid-row";
@@ -114,9 +138,9 @@ function createDivs(height) {
 
 		document.getElementById('grid').appendChild(divRow)
 
-		for (j = 0; j < 20; j++) {
+		for (j = 0; j < limit; j++) {
 			var divElement = document.createElement("Div");
-			divElement.id = "cell-" + (i * 20 + j);
+			divElement.id = "cell-" + (i * limit + j);
 			divElement.className = "grid-cell";
 			divElement.style.textAlign = "center";
 			divElement.style.width = size.toString() + "px";
@@ -135,4 +159,36 @@ function createDivs(height) {
 
 function log(s) {
 	console.log(s)
+}
+
+function colourInGrid() {
+	var populatedCells = {};
+
+	http.onreadystatechange = function() {
+		if (http.readyState === 4) {
+      if (http.status === 200) {
+        console.log("success!");
+				populatedCells = JSON.parse(http.responseText);
+				
+				console.log(populatedCells);
+
+				var cellIds = Object.keys(populatedCells);
+				console.log(cellIds);
+
+				for (var i = 0; i < cellIds.length; i ++) {
+					var cellId = cellIds[i];
+					console.log(cellId + "\t" + populatedCells[cellId].colour);
+					$("#" + cellId).css('background-color', populatedCells[cellId].colour);
+				}
+			} else {
+				console.log("error!");
+			}
+    } else {
+      console.log("waiting...");
+    }
+	}
+
+	http.open("GET", "/retrievePrepopulated/", true);
+	http.send();
+
 }
