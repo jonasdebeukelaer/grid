@@ -1,6 +1,6 @@
 h1 {
-	margin-top: 5px;
-	margin-bottom: 5px;
+	font-size: 3em;
+	margin: 0.1em;
 }
 
 body {
@@ -10,8 +10,9 @@ body {
 .navig {
 	position: fixed;
 	top: 0;
-	width: 100%;
-	min-height: 50px;
+	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+	background-color: white;
+	margin: 5px;
 }
 
 .navig:hover, #darken:hover {
@@ -19,14 +20,12 @@ body {
 }
 
 .navig-title {
-	margin-left: 5px;
-	padding-left: 10px;
 	background-color: white;
-	width: 14%;
+	width: 100%;
 	:hover {
 		cursor: pointer;
 	}
-	z-index: 90;
+	z-index: 9000;
 }
 
 .grid-container {
