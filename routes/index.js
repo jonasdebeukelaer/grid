@@ -29,7 +29,6 @@ router.get('/retrievePrepopulated/', function(req, res) {
 	connection.query(queryString, function(err, rows) {
 		if (err) throw err;
 
-		console.log(rows);
 		try {
 			var cellMap = {};
 			for (var i = 0; i < rows.length; i++) {
@@ -39,7 +38,6 @@ router.get('/retrievePrepopulated/', function(req, res) {
 					user: row.user
 				}
 			}
-			console.log(cellMap);
 			res.send(cellMap);
 		} catch (err) {
 			throw err;
@@ -67,11 +65,9 @@ router.post('/pixel/', function(req, res) {
 			colour: colour,
 			user: user
 		}
-		console.log(req.body);
 
 		connection.query(insertString, data, function(err, result) {
 			if (err) throw err;
-			//res.send(result);
 		})
 
 	})

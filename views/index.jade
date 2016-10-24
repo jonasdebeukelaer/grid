@@ -1,6 +1,8 @@
 extends layout
 
 block content
+  div.hidden
+    label#ip ip goes here
   div.navig
     div#title.navig-title
       h1 #{title}
@@ -17,8 +19,8 @@ block content
     p Site build with the following tools:
     ul
       li: a(href="") jquery
-      li: a(href="") bootstrap
       li: a(href="https://github.com/tkrotoff/jquery-simplecolorpicker") jquery-simplecolorpicker
+      li: a(href="https://socket.io") socket.io
 
     p - Jonas De Beukelaer
 

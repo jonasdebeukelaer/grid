@@ -1,17 +1,15 @@
 'use strict';
 
 var currentCellId = ""
-var aboutVisible = false
-var http = new XMLHttpRequest();
+var aboutVisible = false;
 
 $(document).ready(function () {
-	var gridSize = setGridSize()
-	loadGrid(gridSize);
-	colourInGrid();
+	var gridSize = setGridSize();
+	var socket = io();
 
 	$('.grid-cell').click(function (event) {
 		if (event.currentTarget.id != currentCellId) {
-			focusCell(event.currentTarget.id, selectColour)
+			focusCell(event.currentTarget.id, socket, selectColour)
 		}
 	})
 
@@ -36,46 +34,54 @@ $(document).ready(function () {
 			$('#aboutDiv').removeClass('visible')
 		}
 	})
+
+	socket.on('new pixel', function(pixelData) {
+		fillPixel(pixelData);
+	})
 });
 
-function focusCell(id, callback) {
+function focusCell(id, socket, callback) {
 	$('select[name="colorpicker"]').simplecolorpicker('destroy');
 	$('select[name="colorpicker"]').remove()
 	$('.grid-cell').removeClass('focusCell')
 	$('#' + id).addClass('focusCell')
 	currentCellId = id
-	callback(id)
+	callback(id, socket)
 }
 
-function selectColour(clickedId) {
+function selectColour(clickedId, socket) {
+	var http = new XMLHttpRequest();
 	insertSelect(clickedId)
 	$('select[name="colorpicker"]').simplecolorpicker({
 	  picker: true
 	}).on('change', function() {
 		var newColour = $('select[name="colorpicker"]').val();
-	  $("#" + clickedId).css('background-color', newColour);
+
+		var data = {
+	  	coords: clickedId.split("-")[1],
+	  	colour: newColour.replace("#", ""),
+	  	user: document.getElementById("ip").textContent
+	  }
+
+	  fillPixel(data);
+
 	  $('select[name="colorpicker"]').simplecolorpicker('destroy');
 	  $('select[name="colorpicker"]').remove()
 	  $('#' + clickedId).removeClass('focusCell')
 	  currentCellId = ""
 
-	  var data = {
-	  	coords: clickedId.split("-")[1],
-	  	colour: newColour.replace("#", ""),
-	  	user: "person"
-	  }
-
-	  console.log(data);
 	  http.open("POST", "/pixel/", true);
 		http.setRequestHeader("Content-type", "application/json");
 
-		http.success = function(response) {
-			console.log("pixel added!");
-			console.log(response);
-		}
-
-		http.fail = function(response) {
-			console.log(response);
+		http.onreadystatechange = function(response) {
+			if (http.readyState === 4) {
+    		if (http.status === 200) {
+					console.log("pixel added!");
+					socket.emit('new pixel', data);
+				} else {
+					console.log(response);
+				}
+			}
 		}
 
 		http.send(JSON.stringify(data));
@@ -84,8 +90,16 @@ function selectColour(clickedId) {
 	
 }
 
+function fillPixel(pixelData) {
+	var coords = "cell-" + pixelData.coords
+	var colour = "#" + pixelData.colour
+	var user = pixelData.user
+	if ($("#" + coords).css('background-color') != colour && user != $('#ip').text) {
+		$("#" + coords).css('background-color', colour);
+	}
+}
+
 function insertSelect(id) {
-	log(id)
 	var template = '<select id="' + id + '-select" name="colorpicker"> \
 					<option value="#ffffff">White</option> \
 					<option value="#7bd148">Green</option> \
@@ -109,86 +123,6 @@ function insertSelect(id) {
 	}
 }
 
-
-function setGridSize() {
-	var height = $(document).height()
-	$('.grid-container').css('height', height.toString())
-	$('.grid-square').css('height', height.toString())
-	$('.grid-square').css('width', height.toString())
-
-	return height
-}
-
-function loadGrid(height) {
-	createDivs(height)
-}
-
-function createDivs(height) {
-	var i = 0
-	var j = 0
-	var limit = 20
-	var size = parseInt(height / limit)
-
-	for (i = 0; i < limit; i++) {
-		var divRow = document.createElement("Div");
-		divRow.id = "grid-row-" + i;
-		divRow.className = "grid-row";
-		divRow.style.width = "100%";
-		divRow.style.height = size.toString() + "px";
-
-		document.getElementById('grid').appendChild(divRow)
-
-		for (j = 0; j < limit; j++) {
-			var divElement = document.createElement("Div");
-			divElement.id = "cell-" + (i * limit + j);
-			divElement.className = "grid-cell";
-			divElement.style.textAlign = "center";
-			divElement.style.width = size.toString() + "px";
-			divElement.style.height = size.toString() + "px";
-
-			// var paragraph = document.createElement("P");
-			// var text = document.createTextNode((i * 20 + j));
-			// paragraph.appendChild(text);
-			// divElement.appendChild(paragraph);
-
-			document.getElementById('grid-row-' + i).appendChild(divElement)
-		}
-	}
-
-}
-
 function log(s) {
 	console.log(s)
-}
-
-function colourInGrid() {
-	var populatedCells = {};
-
-	http.onreadystatechange = function() {
-		if (http.readyState === 4) {
-      if (http.status === 200) {
-        console.log("success!");
-				populatedCells = JSON.parse(http.responseText);
-				
-				console.log(populatedCells);
-
-				var cellIds = Object.keys(populatedCells);
-				console.log(cellIds);
-
-				for (var i = 0; i < cellIds.length; i ++) {
-					var cellId = cellIds[i];
-					console.log(cellId + "\t" + populatedCells[cellId].colour);
-					$("#" + cellId).css('background-color', populatedCells[cellId].colour);
-				}
-			} else {
-				console.log("error!");
-			}
-    } else {
-      console.log("waiting...");
-    }
-	}
-
-	http.open("GET", "/retrievePrepopulated/", true);
-	http.send();
-
 }

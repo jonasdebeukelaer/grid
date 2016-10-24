@@ -6,9 +6,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 
 var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +25,6 @@ app.use("/public", express.static(path.normalize(path.join(__dirname, '/public')
 app.use("/node", express.static(path.normalize(path.join(__dirname, '/node_modules'))));
 
 app.use('/', routes);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -59,7 +59,14 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
+io.on('connection', function(socket){
+  console.log('a user connected');
+  socket.on('new pixel', function(pixelData) {
+    console.log('sending out new pixel!')
+    io.emit('new pixel', pixelData);
+  })
+});
 
-app.listen(process.env.PORT || 3333);
-
-console.log('Started server on port ' + (process.env.PORT || 3333));
+http.listen(process.env.PORT || 3333, function() {
+  console.log('Started server on port ' + (process.env.PORT || 3333));
+});
