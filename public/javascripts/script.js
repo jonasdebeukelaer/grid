@@ -76,7 +76,6 @@ function selectColour(clickedId, socket) {
 		http.onreadystatechange = function(response) {
 			if (http.readyState === 4) {
     		if (http.status === 200) {
-					console.log("pixel added!");
 					socket.emit('new pixel', data);
 				} else {
 					console.log(response);
