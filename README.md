@@ -11,10 +11,10 @@ npm install
 then, inside the parent folder:
 
 ```
-node app.js
+npm start
 ```
 
-to start the server
+to start the node server
 
 Currently got a copy on [heroku](https://our-mosaic.herokuapp.com/)
 
